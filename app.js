@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
+// add mongodb 
 var settings = require('./settings');
 var users = require('./routes/users');
 
