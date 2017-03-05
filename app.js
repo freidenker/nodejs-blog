@@ -10,6 +10,9 @@ var routes = require('./routes/index');
 var settings = require('./settings');
 var users = require('./routes/users');
 
+//for db session
+var session=require("express-session");
+var MongoStore=require('connect-mongo')(session);
 
 var app = express();
 
@@ -60,5 +63,17 @@ app.use(function(err, req, res, next) {
   });
 });
 
+app.use(session({
+  secret: settings.cookieSecret,
+  key: settings.db,
+  cookie: {maxAge: 1000*60*60*24*30},
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoStore({
+    db: settings.db,
+    host: settings.host,
+    port: settings.port
+  })
+}));
 
 module.exports = app;
