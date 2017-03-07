@@ -15,7 +15,7 @@ var users = require('./routes/users');
 var session=require('express-session');
 var MongoStore=require('connect-mongo')(session);
 var app = express();
-
+var multer = require('multer');
 // view engine setup
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,6 +28,12 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({
+  dest: './public/images',
+  rename: function(fieldname, filename){
+    return filename;
+  }
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', users);
@@ -48,7 +54,6 @@ app.use(session({
 app.use(flash());
 
 app.use('/', routes);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
