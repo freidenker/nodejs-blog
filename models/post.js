@@ -47,7 +47,7 @@ Post.prototype.save=function(callback){
     });
   });
 };
-
+/*
 Post.getAll=function(name,callback){
   mongodb.open(function(err,db){
     if(err){
@@ -73,6 +73,41 @@ Post.getAll=function(name,callback){
           doc.post=markdown.toHTML(doc.post);
         });
         callback(null,docs);
+      });
+    });
+  });
+};   */
+Post.getTen = function(name, page, callback){
+  mongodb.open(function (err, db){
+    if(err){
+      return callback(err);
+    }
+    db.collection('posts', function(err, collection){
+      if(err){
+        mongodb.close();
+        return callback(err);
+      }
+      var query={};
+      if(name){
+        query.name=name;
+      }
+      collection.count(query, function(err, total){
+        collection.find(query, {
+          skip: (page-1)*3,
+          limit: 3
+
+        }).sort({
+          time: -1
+        }).toArray(function(err, docs){
+          mongodb.close();
+          if(err){
+            return callback(err);
+          }
+          docs.forEach(function(doc){
+            doc.post=markdown.toHTML(doc.post);
+          });
+          callback(null, docs, total);
+        });
       });
     });
   });

@@ -30,13 +30,14 @@ router.get('/hh', function(req, res) {
   res.send("hallo");
 });
 
+/*
 router.get('/',function(req,res){
-/*  res.render('index',{
-    title: '主页',
-    user: req.session.user,
-    success: req.flash('success').toString(),
-    error: req.flash('error').toString()
-  }); */
+//  res.render('index',{
+//    title: '主页',
+//    user: req.session.user,
+//    success: req.flash('success').toString(),
+//    error: req.flash('error').toString()
+//  });
   Post.getAll(null,function(err, posts){
     if(err){
       posts=[];
@@ -50,6 +51,26 @@ router.get('/',function(req,res){
     });
   });
 });
+*/
+router.get('/',function(req,res){
+  var page=req.query.p ? parseInt(req.query.p):1;
+  Post.getTen(null,page,function(err, posts,total){
+    if(err){
+      posts=[];
+    }
+    res.render('index',{
+      title: '主页',
+      posts: posts,
+      page: page,
+      isFirstPage: (page-1)==0,
+      isLastPage: ((page-1)*3+posts.length) == total,
+      user: req.session.user,
+      success: req.flash('success').toString(),
+      error: req.flash('error').toString()
+    });
+  });
+});
+
 
 router.get('/reg', checkNotLogin);
 router.get('/reg',function(req,res){
@@ -153,6 +174,8 @@ router.post('/upload',function(req,res){
   req.flash('success','文件上传成功！');
   res.redirect('/upload');
 });
+
+/*
 router.get('/u/:name',function(req,res){
   User.get(req.params.name,function(err,user){
     if(!user){
@@ -167,6 +190,31 @@ router.get('/u/:name',function(req,res){
       res.render('user',{
         title: user.name,
         posts: posts,
+        user: req.session.user,
+        success: req.flash('success').toString(),
+        error: req.flash('error').toString()
+      });
+    });
+  });
+});  */
+router.get('/u/:name',function(req,res){
+  var page=req.query.p ? parseInt(req.query.p):1;
+  User.get(req.params.name,function(err,user){
+    if(!user){
+      req.flash('error','user not exist!');
+      return res.redirect('/');
+    }
+    Post.getTen(user.name,page,function(err, posts,total){
+      if(err){
+        req.flash('error',err);
+        return res.redirect('/');
+      }
+      res.render('user',{
+        title: user.name,
+        posts: posts,
+        page: page,
+        isFirstPage: (page-1)==0,
+        isLastPage: ((page-1)*3+posts.length) == total,
         user: req.session.user,
         success: req.flash('success').toString(),
         error: req.flash('error').toString()
