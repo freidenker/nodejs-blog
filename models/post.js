@@ -219,7 +219,7 @@ Post.update=function(name, day, title, post, callback){
     });
   });
 };
-
+/*
 Post.remove = function(name, day, title, callback){
   mongodb.open(function (err, db){
     if(err){
@@ -242,6 +242,66 @@ Post.remove = function(name, day, title, callback){
           return callback(err);
         }
         callback(null);
+      });
+    });
+  });
+};  */
+Post.remove=function(name, day, title, callback){
+  mongodb.open(function(err,db){
+    if(err){
+      return callback(err);
+    }
+    db.collection('posts', function(err, collection){
+      if(err){
+        mongodb.close();
+        return callback(err);
+      }
+      collection.findOne({
+        "name": name,
+        "time.day": day,
+        "title": title
+      },function(err, doc){
+        if(err){
+          mongodb.close();
+          return callback(err);
+        }
+        var reprint_from="";
+        if(doc.reprint_info.reprint_from){
+          reprint_from=doc.reprint_info.reprint_from;
+        }
+        if(reprint_from != ""){
+          collection.update({
+            "name": reprint_from.name,
+            "time.day": reprint_from.day,
+            "title": reprint_from.title
+          },{
+            $pull: {
+              "reprint_info.reprint_to": {
+                "name": name,
+                "day": day,
+                "title": title
+              }
+            }
+          },function(err){
+            if(err){
+              mongodb.close();
+              return callback(err);
+            }
+          });
+        }
+        collection.remove({
+          "name": name,
+          "time.day": day,
+          "title": title
+        },{
+          w: 1
+        }, function(err){
+          mongodb.close();
+          if(err){
+            return callback(err);
+          }
+          callback(null);
+        });
       });
     });
   });
