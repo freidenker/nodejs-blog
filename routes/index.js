@@ -1,4 +1,5 @@
 
+var passport = require('passport');
 var express = require('express');
 var router = express.Router();
 
@@ -131,6 +132,16 @@ res.render('login',{
   success: req.flash('success').toString(),
   error: req.flash('error').toString()
  });
+});
+
+router.get('/login/github', passport.authenticate("github",{session: false}));
+router.get('/login/github/callback', passport.authenticate("github",{
+  session: false,
+  failureRedirect: '/login',
+  successFlash: '登陆成功?'
+}), function(req, res){
+  req.session.user={name: req.user.username, head: "https://gravatar.com/avatar/"+ req.user._json.gravatar_id + "?s=48"};
+  res.redirect('/');
 });
 
 router.post('/login', checkNotLogin);

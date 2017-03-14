@@ -19,6 +19,7 @@ var fs=require('fs');
 var accessLog = fs.createWriteStream('access.log',{flags: 'a'});
 var errorLog = fs.createWriteStream('error.log',{flags: 'a'});
 var app = express();
+var passport = require('passport'), GitHubStrategy = require('passport-github').Strategy;
 var multer = require('multer');
 // view engine setup
 // view engine setup
@@ -64,6 +65,7 @@ app.use(session({
 
 app.use(flash());
 
+app.use(passport.initialize());
 app.use('/', routes);
 /*
 app.use(function(req, res){
@@ -83,6 +85,14 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
+passport.use(new GitHubStrategy({
+  clientID: "3a870b3d628df8b2d2e2",
+  clientSecret: "21fb694e25768656a315d84895e3454b624b720b",
+  callbackURL: "http://127.0.0.1:3000/login/github/callback"
+}, function(accessToken, refreshToken, profile, done){
+  done(null, profile);
+}));
+
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
