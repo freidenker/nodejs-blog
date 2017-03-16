@@ -3,6 +3,20 @@
   <head>
     <title>Blog</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script charset="utf-8" src="/KindEditor/kindeditor-all-min.js"></script>
+    <script charset="utf-8" src="/KindEditor/lang/en.js"></script>
+    <script>
+    var editor;
+    KindEditor.ready(function(K){
+      editor = K.create('textarea',{
+        allowImageUpload : false,
+        items : [
+          'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright',
+          'isnertorderedlist', 'insertunorderedlist', '|', 'emoticons', 'image', 'link']
+      });
+  //     editor = K.create('#kindeditor');
+    });
+    </script>
   </head>
   <body>
     <header>

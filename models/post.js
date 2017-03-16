@@ -1,5 +1,5 @@
 var mongodb = require('./db');
-markdown = require('markdown').markdown;
+// markdown = require('markdown').markdown;
 
 function Post(name, head, title, tags, post){
   this.name=name;
@@ -109,9 +109,9 @@ Post.getTen = function(name, page, callback){
           if(err){
             return callback(err);
           }
-          docs.forEach(function(doc){
-            doc.post=markdown.toHTML(doc.post);
-          });
+  //        docs.forEach(function(doc){
+  //          doc.post=markdown.toHTML(doc.post);
+  //        });
           callback(null, docs, total);
         });
       });
@@ -154,12 +154,12 @@ Post.getOne = function(name, day, title, callback){
               return callback(err);
             }
           });
-
+/*
           doc.post = markdown.toHTML(doc.post);
       //    console.log(doc.comment);
           doc.comments.forEach(function(comment){
             comment.content = markdown.toHTML(comment.content);
-          });
+          });  */
 
         callback(null, doc);
         }
